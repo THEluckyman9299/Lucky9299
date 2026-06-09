@@ -1,0 +1,508 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Portfolio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --bg:#070b14;
+    --bg2:#0f172a;
+    --card:rgba(255,255,255,.06);
+    --border:rgba(255,255,255,.12);
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+    --accent2:#8b5cf6;
+    --danger:#ff8b8b;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(96,165,250,.15), transparent 35%),
+        radial-gradient(circle at top right, rgba(139,92,246,.15), transparent 35%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+        linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+    background-size:40px 40px;
+    pointer-events:none;
+    z-index:-1;
+}
+
+.container{
+    width:min(1200px,92%);
+    margin:auto;
+}
+
+.hero{
+    min-height:70vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:120px 0 80px;
+}
+
+.hero-content{
+    max-width:900px;
+}
+
+.hero h1{
+    font-size:clamp(3.5rem,8vw,7rem);
+    font-weight:800;
+    letter-spacing:-3px;
+    background:linear-gradient(90deg,#ffffff,#93c5fd,#c4b5fd);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:heroLoad 1s ease forwards;
+    opacity:0;
+}
+
+.hero p{
+    margin-top:20px;
+    color:var(--muted);
+    font-size:clamp(1rem,2vw,1.25rem);
+    line-height:1.8;
+    animation:heroLoad 1s ease .2s forwards;
+    opacity:0;
+}
+
+.glass{
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+}
+
+.section{
+    padding:80px 0;
+}
+
+.section-title{
+    text-align:center;
+    font-size:clamp(2rem,4vw,3rem);
+    margin-bottom:40px;
+    font-weight:800;
+}
+
+.gallery-wrapper{
+    border-radius:28px;
+    padding:28px;
+}
+
+.gallery{
+    columns:4 260px;
+    column-gap:18px;
+}
+
+.gallery-item{
+    break-inside:avoid;
+    margin-bottom:18px;
+    border-radius:20px;
+    overflow:hidden;
+    cursor:pointer;
+    position:relative;
+    opacity:0;
+    transform:translateY(40px);
+    transition:
+        transform .4s ease,
+        box-shadow .4s ease,
+        opacity .8s ease;
+}
+
+.gallery-item.visible{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.gallery-item img{
+    width:100%;
+    display:block;
+    border-radius:20px;
+    transition:transform .5s ease;
+}
+
+.gallery-item:hover{
+    transform:translateY(-4px);
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+.gallery-item:hover img{
+    transform:scale(1.06);
+}
+
+.empty-gallery{
+    text-align:center;
+    color:var(--muted);
+    padding:40px 20px;
+}
+
+.pricing-description{
+    max-width:850px;
+    margin:0 auto 20px;
+    text-align:center;
+    color:var(--muted);
+    line-height:1.8;
+}
+
+.warning{
+    text-align:center;
+    color:var(--danger);
+    font-weight:700;
+    margin-bottom:35px;
+}
+
+.pricing-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:24px;
+}
+
+.price-card{
+    padding:30px;
+    border-radius:24px;
+    transition:
+        transform .35s ease,
+        border-color .35s ease,
+        box-shadow .35s ease;
+}
+
+.price-card:hover{
+    transform:translateY(-8px);
+    border-color:rgba(96,165,250,.4);
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+.price-card h3{
+    margin-bottom:14px;
+    font-size:1.4rem;
+}
+
+.price-card p{
+    color:#dbeafe;
+    font-size:1.1rem;
+    font-weight:600;
+}
+
+footer{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--muted);
+    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:80px;
+}
+
+.reveal{
+    opacity:0;
+    transform:translateY(50px);
+    transition:
+        opacity .9s ease,
+        transform .9s ease;
+}
+
+.reveal.active{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    visibility:hidden;
+    transition:.3s ease;
+    z-index:9999;
+    padding:20px;
+}
+
+.lightbox.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.lightbox img{
+    max-width:95%;
+    max-height:90vh;
+    border-radius:18px;
+    box-shadow:0 25px 80px rgba(0,0,0,.5);
+    animation:zoomIn .3s ease;
+}
+
+.close-lightbox{
+    position:absolute;
+    top:20px;
+    right:30px;
+    font-size:2rem;
+    color:white;
+    cursor:pointer;
+    user-select:none;
+}
+
+@keyframes heroLoad{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes zoomIn{
+    from{
+        transform:scale(.9);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@media(max-width:768px){
+
+    .hero{
+        min-height:60vh;
+    }
+
+    .gallery-wrapper{
+        padding:18px;
+    }
+
+    .section{
+        padding:60px 0;
+    }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="hero-content container">
+        <h1>Portfolio</h1>
+        <p>
+            My name is Lucky, im best at building Studs, Low Poly, and Blocky Builds
+        </p>
+    </div>
+</header>
+
+<section class="section reveal">
+    <div class="container">
+        <div class="gallery-wrapper glass">
+            <div id="gallery" class="gallery">
+                <div class="empty-gallery">
+                    Loading portfolio...
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section reveal">
+    <div class="container">
+
+        <h2 class="section-title">Pricing</h2>
+
+        <p class="pricing-description">
+            I can build small samples before doing comissions, those samples will show how the build's style would end up looking like
+        </p>
+
+        <p class="warning">
+            All Prices mentioned here are After Tax
+        </p>
+
+        <div class="pricing-grid">
+
+            <div class="price-card glass">
+                <h3>Small Builds</h3>
+                <p>R$ 1,150 - 4,000</p>
+            </div>
+
+            <div class="price-card glass">
+                <h3>Medium Builds</h3>
+                <p>R$ 4,300 - 7,000</p>
+            </div>
+
+            <div class="price-card glass">
+                <h3>Large Builds</h3>
+                <p>R$ 10,000+</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    © Lucky Portfolio
+</footer>
+
+<div class="lightbox" id="lightbox">
+    <span class="close-lightbox">&times;</span>
+    <img id="lightboxImage" alt="Portfolio Image">
+</div>
+
+<script>
+const gallery = document.getElementById("gallery");
+
+/*
+GitHub Pages cannot automatically list folder contents.
+
+This script attempts common filenames often used
+for generated galleries. If images.json exists,
+the gallery becomes fully automatic.
+
+images/images.json example:
+
+[
+  "randomFile1.png",
+  "anotherRandomName.png"
+]
+*/
+
+async function loadGallery() {
+
+    const imageSources = [];
+
+    try {
+        const response = await fetch("images/images.json");
+
+        if(response.ok){
+            const files = await response.json();
+
+            files.forEach(file=>{
+                if(file.toLowerCase().endsWith(".png")){
+                    imageSources.push(`images/${file}`);
+                }
+            });
+        }
+    } catch(e){}
+
+    if(imageSources.length === 0){
+        gallery.innerHTML = `
+            <div class="empty-gallery">
+                No portfolio images found.<br>
+                Add PNG files and an images.json file inside the images folder.
+            </div>
+        `;
+        return;
+    }
+
+    gallery.innerHTML = "";
+
+    imageSources.forEach(src => {
+
+        const item = document.createElement("div");
+        item.className = "gallery-item";
+
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = src;
+        img.alt = "Portfolio Image";
+
+        item.appendChild(img);
+        gallery.appendChild(item);
+
+        img.addEventListener("load", () => {
+            requestAnimationFrame(() => {
+                item.classList.add("visible");
+            });
+        });
+
+        item.addEventListener("click", () => {
+            openLightbox(src);
+        });
+
+        galleryObserver.observe(item);
+    });
+}
+
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+
+function openLightbox(src){
+    lightboxImage.src = src;
+    lightbox.classList.add("active");
+}
+
+function closeLightbox(){
+    lightbox.classList.remove("active");
+}
+
+document.querySelector(".close-lightbox")
+.addEventListener("click", closeLightbox);
+
+lightbox.addEventListener("click",(e)=>{
+    if(e.target === lightbox){
+        closeLightbox();
+    }
+});
+
+document.addEventListener("keydown",(e)=>{
+    if(e.key === "Escape"){
+        closeLightbox();
+    }
+});
+
+const revealObserver = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add("active");
+        }
+    });
+},{
+    threshold:0.15
+});
+
+document.querySelectorAll(".reveal").forEach(el=>{
+    revealObserver.observe(el);
+});
+
+const galleryObserver = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add("visible");
+        }
+    });
+},{
+    threshold:0.1
+});
+
+loadGallery();
+</script>
+
+</body>
+</html>
+```
